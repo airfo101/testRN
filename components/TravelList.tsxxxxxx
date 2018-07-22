@@ -1,0 +1,38 @@
+// components/Hello.tsx
+import React from 'react';
+import {Button, StyleSheet, Text, View} from 'react-native';
+
+export interface Props {
+  name: string;
+  enthusiasmLevel?: number;
+}
+
+interface State {
+  enthusiasmLevel: number;
+}
+
+
+export class TravelList extends React.Component<Props, State> {
+    url:string = 'https://data.hsinchu.gov.tw/OpenData/GetFile.aspx?GUID=297144dc-b8f1-47de-b120-e465a091e413&FM=json';
+    constructor(props: Props) {
+        super(props);
+    }
+
+    componentDidMount() {
+        fetch(this.url)
+            .then(r => {
+                console.log(`Result: ${r}`);
+            })
+            .catch(err => console.log(`Error: ${err}`));
+    }
+
+    render() {
+        return (
+            <View></View>
+        );
+    }
+}
+
+const styles = StyleSheet.create({
+
+});

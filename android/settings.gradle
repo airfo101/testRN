@@ -1,0 +1,3 @@
+rootProject.name = 'RNCli'
+
+include ':app'

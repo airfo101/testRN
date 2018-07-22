@@ -1,0 +1,29 @@
+importScripts('https://www.gstatic.com/firebasejs/5.2.0/firebase.js');
+importScripts('https://www.gstatic.com/firebasejs/5.2.0/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/5.2.0/firebase-messaging.js');
+
+
+var config = {
+    apiKey: "AIzaSyAeRCqbVPr9vpS2HazBA_J4v557kIChtNE",
+    authDomain: "myptcmdm.firebaseapp.com",
+    databaseURL: "https://myptcmdm.firebaseio.com",
+    projectId: "myptcmdm",
+    storageBucket: "myptcmdm.appspot.com",
+    messagingSenderId: "186863859887"
+};
+firebase.initializeApp(config);
+const messaging = firebase.messaging();
+
+console.log('service worker init ');
+messaging.setBackgroundMessageHandler(function(payload) {
+    console.log('[firebase-messaging-sw.js] Received background message ', payload);
+    // Customize notification here
+    const notificationTitle = 'Background Message Title';
+    const notificationOptions = {
+        body: 'Background Message body.',
+        icon: '/firebase-logo.png'
+    };
+
+return self.registration.showNotification(notificationTitle,
+    notificationOptions);
+});

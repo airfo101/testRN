@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+
+<head>
+    <link rel="manifest" href="./manifest.json">
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        let config = {
+            apiKey: "AIzaSyAeRCqbVPr9vpS2HazBA_J4v557kIChtNE",
+            authDomain: "myptcmdm.firebaseapp.com",
+            databaseURL: "https://myptcmdm.firebaseio.com",
+            projectId: "myptcmdm",
+            storageBucket: "myptcmdm.appspot.com",
+            messagingSenderId: "186863859887"
+        };
+        let defaultApp = firebase.initializeApp(config);
+        let messaging = firebase.messaging();
+    </script>
+</head>
+
+<body>
+    <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+    <button id="btnGet">取得token</button>
+    <div id="log"></div>
+    <script src="" async defer></script>
+</body>
+
+
+<!-- Firebase App is always required and must be first -->
+<script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-app.js"></script>
+
+<!-- Add additional services that you want to use -->
+<!-- <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-auth.js"></script> -->
+<!-- <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-database.js"></script> -->
+<!-- <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-firestore.js"></script> -->
+<script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-messaging.js"></script>
+<!-- <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-functions.js"></script> -->
+
+
+<script>
+    let $log = document.getElementById('log');
+
+    function _lg(msg) {
+        let _div = document.createElement('div');
+        _div.innerText = `[${(new Date()).toLocaleString()} - msg]: ${msg}`;
+        $log.appendChild(_div);
+    }
+
+
+
+    messaging.requestPermission().then(function () {
+        console.log('Notification permission granted.');
+        // TODO(developer): Retrieve an Instance ID token for use with FCM.
+        // ...
+    }).catch(function (err) {
+        console.log('Unable to get permission to notify.', err);
+    });
+
+    //收到訊息後的處理
+    messaging.onMessage(function (payload) {
+        //Log
+        console.log('Get message....', payload);
+        //$log.innerHTML("Message received :" + JSON.stringify(payload) + "<br><br>");
+
+
+        //如果可以顯示通知就做顯示通知
+        if (Notification.permission === 'granted') {
+            var notifyConfig = payload.notification;
+            notifyConfig.image = payload.data.image;
+            notifyConfig.badge = payload.data.badge; //only used on Chrome for Android
+            var notification = new Notification(payload.notification.title, notifyConfig); // 建立通知
+            setTimeout(notification.close.bind(notification), 2000); //三秒後自動關閉
+        };
+    });
+
+
+    let $btnGet = document.getElementById('btnGet');
+    $btnGet.onclick = (e) => {
+
+        messaging.getToken()
+            .then(function (currentToken) {
+                _lg("TOKEN: " + currentToken)
+                if (currentToken) {
+                    RegistUserTokenToSelfServer(currentToken, function (result) {
+                        _lg("送回給自己 Server 的結果 :" + result)
+                    });
+                } else {
+                    _lg('註冊失敗請檢查相關設定.');
+                }
+            })
+            .catch(function (err) {
+
+                _lg("跟 Server 註冊失敗 原因:" + err + "<br>");
+            });
+    };
+</script>
+
+</html>
